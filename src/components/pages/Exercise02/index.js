@@ -15,40 +15,90 @@
 import "./assets/styles.css";
 import { useEffect, useState } from "react";
 
-export default function Exercise02 () {
+export default function Exercise02() {
   const [movies, setMovies] = useState([])
+  const [moviesFiltereds, setMoviesFiltereds] = useState([])
+  const [genres, setGenres] = useState([])
+  const [ascending, setAscending] = useState(false);
   const [fetchCount, setFetchCount] = useState(0)
   const [loading, setLoading] = useState(false)
 
-  const handleMovieFetch = () => {
+  const handleMovieFetch = (filter) => {
     setLoading(true)
     setFetchCount(fetchCount + 1)
     console.log('Getting movies')
-    fetch('http://localhost:3001/movies?_limit=50')
+    let apiUrl = `http://localhost:3001/movies?_limit=50`;
+    if (filter) apiUrl = apiUrl + `&${filter.key}=${filter.value}`;
+
+    fetch(apiUrl)
       .then(res => res.json())
       .then(json => {
         setMovies(json)
+        setMoviesFiltereds(json)
         setLoading(false)
       })
       .catch(() => {
         console.log('Run yarn movie-api for fake api')
       })
   }
+  const listGenresFetch = () => {
+    setLoading(true)
+    setFetchCount(fetchCount + 1)
+    fetch('http://localhost:3001/genres')
+      .then(res => res.json())
+      .then(json => {
+        setGenres(json)
+        setLoading(false)
+      })
+      .catch(() => {
 
-  useEffect(() => {
-    handleMovieFetch()
-  }, [handleMovieFetch])
+      })
+  }
+
+  useEffect(async () => {
+    await listGenresFetch();
+    await handleMovieFetch();
+  }, [])
+
+
+  function filterMoviesByGenre(value) {
+    if (value) {
+      const filtereds = movies.filter(movie => movie.genres.find(_genre => _genre === value));
+      setMoviesFiltereds(filtereds);
+    } else {
+      setMoviesFiltereds(movies);
+    }
+  }
+
+  function orderMovies() {
+    let sortMovies = [];
+    if (ascending) {
+      sortMovies = moviesFiltereds.sort((a, b) => +b.year - +a.year);
+      setAscending(false);
+    } else {
+      sortMovies = moviesFiltereds.sort((a, b) => +a.year - +b.year);
+      setAscending(true);
+    }
+    setMoviesFiltereds([...sortMovies]);
+  }
+
+
 
   return (
     <section className="movie-library">
-      <h1 className="movie-library__title">
-        Movie Library
-      </h1>
-      <div className="movie-library__actions">
-        <select name="genre" placeholder="Search by genre...">
-          <option value="genre1">Genre 1</option>
-        </select>
-        <button>Order Descending</button>
+      <div className="movie-library__cover">
+        <div className="container">
+          <h1 className="movie-library__title">
+            Movie Library
+          </h1>
+          <div className="movie-library__actions">
+            <select name="genre" placeholder="Search by genre..." onChange={(e => filterMoviesByGenre(e.target.value))}>
+              <option value=''>Todos los Generos</option>
+              {genres.map(genre => <option key={`option-genre-${genre}`} value={`${genre}`}>{`${genre}`}</option>)}
+            </select>
+            <button onClick={orderMovies}>Order {ascending ? `Descending` : 'Ascending'}</button>
+          </div>
+        </div>
       </div>
       {loading ? (
         <div className="movie-library__loading">
@@ -57,7 +107,7 @@ export default function Exercise02 () {
         </div>
       ) : (
         <ul className="movie-library__list">
-          {movies.map(movie => (
+          {moviesFiltereds.map(movie => (
             <li key={movie.id} className="movie-library__card">
               <img src={movie.posterUrl} alt={movie.title} />
               <ul>
@@ -65,7 +115,7 @@ export default function Exercise02 () {
                 <li>Title: {movie.title}</li>
                 <li>Year: {movie.year}</li>
                 <li>Runtime: {movie.runtime}</li>
-                <li>Genres: {movie.genres.join(', ')}</li>
+                <li>Genres: {movie.genres && movie.genres.join(', ')}</li>
               </ul>
             </li>
           ))}

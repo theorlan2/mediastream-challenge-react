@@ -2,22 +2,40 @@
   background-color: var(--black);
   color: var(--white);
   min-height: 100vh;
+}
+
+.container {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 92%;
+}
+
+.movie-library__cover {
+  display: flex;
+  justify-content: center;
+  background-image: url('./mountains.jpeg');
+  background-size: cover;
+  background-position: 0 20%;
   padding: 2em;
 }
 
 .movie-library__title {
   font-size: 2em;
+  font-weight: bold;
   margin-bottom: 1em;
 }
 
 .movie-library__actions {
   display: flex;
   margin-bottom: 1em;
+  width: 100%;
 }
 
 .movie-library__actions select {
   width: 100%;
   padding: .25em;
+  border: solid 1px #97D700 ;
+  border-radius: 3px 0px 0px 3px;
 }
 
 .movie-library__actions button {
