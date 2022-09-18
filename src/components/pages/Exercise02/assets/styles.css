@@ -11,35 +11,59 @@
 }
 
 .movie-library__cover {
+  position: relative;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   background-image: url('./mountains.jpeg');
   background-size: cover;
   background-position: 0 20%;
-  padding: 2em;
+  padding-top: 3em;
+  z-index: 0;
+}
+
+.movie-library__cover::after {
+  content: '';
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  bottom: 0px;
+  left: 0px;
+  z-index: -1;
+  background: rgb(2, 0, 36);
+  background: linear-gradient(0deg, rgba(34, 34, 34, 1) 5%, rgba(34, 34, 34, 0) 100%);
+
 }
 
 .movie-library__title {
   font-size: 2em;
   font-weight: bold;
   margin-bottom: 1em;
+  z-index: 3;
 }
 
 .movie-library__actions {
   display: flex;
   margin-bottom: 1em;
   width: 100%;
+  z-index: 2;
 }
 
 .movie-library__actions select {
   width: 100%;
   padding: .25em;
-  border: solid 1px #97D700 ;
+  border: solid 1px #97D700;
   border-radius: 3px 0px 0px 3px;
+  z-index: 1;
 }
 
 .movie-library__actions button {
   white-space: nowrap;
+  border-radius: 0px 3px 3px 0px;
+  border: none;
+  background-color: #97D700;
+  z-index: 1;
 }
 
 .movie-library__loading {
@@ -51,19 +75,53 @@
 }
 
 .movie-library__list {
+  display: flex;
   padding: 1em;
   background-color: #222222;
+  flex-wrap: wrap;
 }
 
 .movie-library__card {
   background-color: #333333;
   margin-bottom: 1em;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  width: 23%;
+  margin: 1%;
 }
 
 .movie-library__card img {
-  width: 10em;
+  width: 100%;
+}
+
+.movie-library_card_details {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 50%;
+  background: linear-gradient(0deg, rgba(151, 215, 0, 1) 15%, rgba(34, 34, 34, 0) 100%);
+  padding-top: 1em;
+}
+
+.movie-library_card_details_bottom {
+  position: absolute;
+  bottom: 0;
+}
+
+.movie-library_card_details h4 {
+  font-weight: 600;
+  font-size: 14px;
+  text-shadow: 1px 1px 2px rgb(34, 34, 34, 0.5);
+}
+
+.movie-library_card_details p {
+  font-weight: 300;
+  font-size: 12px;
+  text-shadow: 1px 1px 2px rgb(34, 34, 34, 0.7);
 }
 
 .movie-library__card ul {

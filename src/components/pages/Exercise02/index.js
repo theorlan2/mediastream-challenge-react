@@ -19,16 +19,15 @@ export default function Exercise02() {
   const [movies, setMovies] = useState([])
   const [moviesFiltereds, setMoviesFiltereds] = useState([])
   const [genres, setGenres] = useState([])
-  const [ascending, setAscending] = useState(false);
+  const [isAscending, setIsAscending] = useState(false);
   const [fetchCount, setFetchCount] = useState(0)
   const [loading, setLoading] = useState(false)
 
-  const handleMovieFetch = (filter) => {
+  const handleMovieFetch = () => {
     setLoading(true)
     setFetchCount(fetchCount + 1)
     console.log('Getting movies')
     let apiUrl = `http://localhost:3001/movies?_limit=50`;
-    if (filter) apiUrl = apiUrl + `&${filter.key}=${filter.value}`;
 
     fetch(apiUrl)
       .then(res => res.json())
@@ -72,17 +71,15 @@ export default function Exercise02() {
 
   function orderMovies() {
     let sortMovies = [];
-    if (ascending) {
+    if (isAscending) {
       sortMovies = moviesFiltereds.sort((a, b) => +b.year - +a.year);
-      setAscending(false);
+      setIsAscending(false);
     } else {
       sortMovies = moviesFiltereds.sort((a, b) => +a.year - +b.year);
-      setAscending(true);
+      setIsAscending(true);
     }
     setMoviesFiltereds([...sortMovies]);
   }
-
-
 
   return (
     <section className="movie-library">
@@ -96,7 +93,7 @@ export default function Exercise02() {
               <option value=''>Todos los Generos</option>
               {genres.map(genre => <option key={`option-genre-${genre}`} value={`${genre}`}>{`${genre}`}</option>)}
             </select>
-            <button onClick={orderMovies}>Order {ascending ? `Descending` : 'Ascending'}</button>
+            <button onClick={orderMovies}>Year {isAscending ? `Descending` : 'Ascending'}</button>
           </div>
         </div>
       </div>
@@ -106,20 +103,24 @@ export default function Exercise02() {
           <p>Fetched {fetchCount} times</p>
         </div>
       ) : (
+          <div className="container">
         <ul className="movie-library__list">
           {moviesFiltereds.map(movie => (
             <li key={movie.id} className="movie-library__card">
               <img src={movie.posterUrl} alt={movie.title} />
-              <ul>
-                <li>ID: {movie.id}</li>
-                <li>Title: {movie.title}</li>
-                <li>Year: {movie.year}</li>
-                <li>Runtime: {movie.runtime}</li>
-                <li>Genres: {movie.genres && movie.genres.join(', ')}</li>
-              </ul>
+              <div className="movie-library_card_details" >
+              <div className="movie-library_card_details_bottom" >
+                <ul>
+                  <li ><h4>{movie.title}</h4></li>
+                  <li><p>{movie.genres && movie.genres.join(', ')}</p></li>
+                  <li><p>{movie.year}</p></li>
+                </ul>
+              </div>
+              </div>
             </li>
           ))}
         </ul>
+          </div>
       )}
     </section>
   )
